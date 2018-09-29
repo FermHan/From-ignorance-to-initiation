@@ -1,0 +1,47 @@
+#这段代码是之前学姐让我统计标签数目时敲的，比较基础，连写带百度。算是写的第一个py
+#内容是有11089个浮游植物的样本，共有十几种类别，统计每个类别的样本数目
+#统计的内容放在百度云中  https://pan.baidu.com/s/16wEbUpXBjqb4WAx6OAwXsQ
+#不足：正则表达式感觉看起来更高大上，但当时还没学会（当然现在也没有）
+from os import path
+
+cls = {}
+validFile = 0
+#you must change next line to your path of datasets !!!
+MyPath = "C:/Users/HAN/Desktop/Annotations/"
+i = 1
+NextFilename = MyPath + str(i) + ".xml"
+print("-----------------------------------")
+print("Some of files don't exist:")
+while i<=11089:
+    if path.exists( NextFilename ) == False: #assert file exists
+        print(i,end = ' ')
+        i+=1
+        NextFilename = MyPath + str(i) + ".xml" #update filename
+        continue
+    validFile+=1
+    f = open(NextFilename)
+    data = f.readlines()
+    dataSize = len(data)
+    z = 9  #the foregoing rows are useless
+    while z<dataSize:
+        line = data[z]
+        if line.startswith("    <name>") == True:
+            line = line.strip() #strip space and \n
+            classfication=line[6:-7]  #except '<name>' and '</name>'
+#            classfication = line.strip('</name>')    #it works but some words are incomplete
+            cls[classfication] = cls.get(classfication,0) + 1
+        z+=1
+    f.close()
+    i+=1
+    NextFilename = MyPath + str(i) + ".xml" #updata filename
+    
+print("-----------------------------------")
+print("Number of valid files:%d"%validFile)
+print("-----------------------------------")
+print("Number of every classification:")
+numberOfSeston = 0
+for key,value in cls.items():
+    print("%s:%s"%(key,value))
+    numberOfSeston+=value
+print("-----------------------------------")
+print("Total number of labels:%d"%numberOfSeston)
